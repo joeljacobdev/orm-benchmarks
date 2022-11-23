@@ -13,7 +13,7 @@ count *= 2
 
 async def _runtest(count):
     for _ in range(count):
-        await Journal.get(id=randint(1, maxval))
+        result = await Journal.get(id=randint(1, maxval))
 
 
 async def runtest(loopstr):

@@ -14,25 +14,19 @@ from sqlalchemy import (
     SmallInteger,
     String,
     Text,
+    create_engine,
 )
-from sqlalchemy.orm import declarative_base, sessionmaker
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 concurrents = int(os.environ.get("CONCURRENTS", "10"))
-engine = create_async_engine(
-    f"postgresql+asyncpg://joel:joeljacob@0.0.0.0:9500/tbench",
-    pool_size=concurrents, max_overflow=0,
-    # echo=True
-)
-async_session = sessionmaker(
-    bind=engine, class_=AsyncSession, expire_on_commit=False, future=True,
-)
+engine = create_engine(f"postgresql://joel:joeljacob@0.0.0.0:9500/tbench", pool_size=concurrents, max_overflow=0)
 
 Base = declarative_base()
 
 test = int(os.environ.get("TEST", "1"))
 if test == 1:
+
     class Journal(Base):
         __tablename__ = "journal"
 
@@ -41,12 +35,13 @@ if test == 1:
         level = Column(SmallInteger, index=True, nullable=False)
         text = Column(String(255), index=True, nullable=False)
 
+
 if test == 2:
+
     class JournalRelated(Base):
         __tablename__ = "journal_related"
         journal_id = Column(Integer, ForeignKey("journal.id"), primary_key=True)
         journal_from_id = Column(Integer, ForeignKey("journal.id"), primary_key=True)
-
 
     class Journal(Base):
         __tablename__ = "journal"
@@ -66,7 +61,9 @@ if test == 2:
             primaryjoin=id == JournalRelated.journal_from_id,
         )
 
+
 if test == 3:
+
     class Journal(Base):
         __tablename__ = "journal"
 
@@ -126,3 +123,7 @@ if test == 3:
         col_text4 = Column(Text)
         col_decimal4 = Column(Numeric(12, 8))
         col_json4 = Column(JSON)
+
+
+def create_tables():
+    Base.metadata.create_all(engine)

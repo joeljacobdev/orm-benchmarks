@@ -8,19 +8,14 @@ authors = ["long2ice <long2ice@gmail.com>"]
 python = "^3.8"
 # ORM's
 django = "*"
-sqlalchemy = "*"
-peewee = "*"
-pony = "*"
-sqlobject = "*"
+sqlalchemy = "1.4.44"
 tortoise-orm = "*"
 # DB drivers
 asyncpg = "*"
-asyncmy = "*"
-mysqlclient = "*"
-psycopg2 = "*"
 # Recommended accelerators
 uvloop = "*"
 python-rapidjson = "*"
+psycopg2-binary = "^2.9.5"
 
 [tool.poetry.dev-dependencies]
 # Testing tools

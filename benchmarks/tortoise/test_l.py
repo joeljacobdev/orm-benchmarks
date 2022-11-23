@@ -14,8 +14,7 @@ async def _runtest(mi, ma) -> int:
     objs = list(await Journal.filter(id__gte=mi, id__lt=ma).all())
     async with in_transaction():
         for obj in objs:
-            obj.level = choice(LEVEL_CHOICE)
-            await obj.save()
+            await obj.delete()
     return len(objs)
 
 
@@ -27,8 +26,8 @@ async def runtest(loopstr):
     start = time.time()
     count = sum(
         await asyncio.gather(
-            *[_runtest(i * inrange or 1, ((i + 1) * inrange) - 1) for i in range(concurrents)]
+            *[_runtest(i * inrange, ((i + 1) * inrange) - 1) for i in range(concurrents)]
         )
     )
     now = time.time()
-    print(f"Tortoise ORM{loopstr}, K: Rows/sec: {count / (now - start): 10.2f}")
+    print(f"Tortoise ORM{loopstr}, L: Rows/sec: {count / (now - start): 10.2f}")

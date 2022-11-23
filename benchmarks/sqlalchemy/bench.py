@@ -1,7 +1,6 @@
 #!/usr/bin/env python
-import os
 import sys
-import logging
+from models import *
 
 try:
     concurrents = int(os.environ.get("CONCURRENTS", "10"))
@@ -11,6 +10,7 @@ try:
     else:
         loopstr = ""
     if os.environ.get("UVLOOP", ""):
+        print('UVLOOP ---')
         import asyncio
 
         import uvloop
@@ -21,8 +21,6 @@ finally:
 
 if concurrents > 1 and sys.version_info < (3, 7):
     sys.exit()
-
-db_url = f"postgres://joel:joeljacob@0.0.0.0:9500/tbench"
 
 import test_a
 import test_b
@@ -36,20 +34,11 @@ import test_i
 import test_j
 import test_k
 import test_l
-from tortoise import Tortoise, run_async
-
-
-async def init():
-    # Here we create a SQLite DB using file "db.sqlite3"
-    #  also specify the app name of "models"
-    #  which contain models from "app.models"
-    await Tortoise.init(db_url=db_url, modules={"models": ["models"]})
 
 
 async def create_db():
-    # Generate the schema
-    await init()
-    await Tortoise.generate_schemas()
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 
 async def run_benchmarks():
@@ -68,17 +57,8 @@ async def run_benchmarks():
     await test_l.runtest(loopstr)
 
 
-# fmt = logging.Formatter(
-#     fmt="%(asctime)s - %(name)s:%(lineno)d - %(levelname)s - %(message)s",
-#     datefmt="%Y-%m-%d %H:%M:%S",
-# )
-# sh = logging.StreamHandler(sys.stdout)
-# sh.setLevel(logging.DEBUG)
-# sh.setFormatter(fmt)
-#
-# # will print debug sql
-# logger_db_client = logging.getLogger("tortoise.db_client")
-# logger_db_client.setLevel(logging.DEBUG)
-# logger_db_client.addHandler(sh)
+# asyncio.run(run_benchmarks())
 
-run_async(run_benchmarks())
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run_benchmarks())

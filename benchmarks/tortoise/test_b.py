@@ -15,14 +15,12 @@ count = int(count // concurrents) * concurrents
 async def _runtest(count):
     async with in_transaction():
         for i in range(count):
-            await Journal.create(level=choice(LEVEL_CHOICE), text=f"Insert from B, item {i}")
+            a = await Journal.create(level=choice(LEVEL_CHOICE), text=f"Insert from B, item {i}")
+            a = a.id
 
 
 async def runtest(loopstr):
-    start = now = time.time()
-
+    start = time.time()
     await asyncio.gather(*[_runtest(count // concurrents) for _ in range(concurrents)])
-
     now = time.time()
-
     print(f"Tortoise ORM{loopstr}, B: Rows/sec: {count / (now - start): 10.2f}")
