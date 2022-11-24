@@ -18,7 +18,7 @@ async def _runtest(count):
                 insert(Journal).returning(Journal),
                 [dict(level=choice(LEVEL_CHOICE), text=f"Insert from B, item {i}")]
             )
-            a = a.one().id
+            a = a.scalar().id
 
 
 async def runtest(loopstr):

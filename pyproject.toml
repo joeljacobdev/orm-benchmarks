@@ -8,7 +8,7 @@ authors = ["long2ice <long2ice@gmail.com>"]
 python = "^3.8"
 # ORM's
 django = "*"
-sqlalchemy = "1.4.44"
+sqlalchemy = "2.0.0b3"
 tortoise-orm = "*"
 # DB drivers
 asyncpg = "*"
